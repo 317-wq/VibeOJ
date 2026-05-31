@@ -1,0 +1,72 @@
+problems:
+  - title: "两数之和"
+    description: |
+      给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。
+
+      **输入格式：**
+      第一行包含一个整数 n，表示数组的长度。
+      第二行包含 n 个整数，表示数组 nums。
+      第三行包含一个整数 target。
+
+      **输出格式：**
+      输出两个整数，表示答案的下标（用空格分隔）。你可以假设每种输入只会对应一个答案。
+
+      **示例：**
+      输入：
+      ```
+      4
+      2 7 11 15
+      9
+      ```
+      输出：
+      ```
+      0 1
+      ```
+    difficulty: easy
+    time_limit_ms: 1000
+    memory_limit_kb: 262144
+    test_cases:
+      - input: "4\n2 7 11 15\n9\n"
+        expected_output: "0 1\n"
+        is_sample: true
+      - input: "3\n3 2 4\n6\n"
+        expected_output: "1 2\n"
+        is_sample: false
+      - input: "2\n3 3\n6\n"
+        expected_output: "0 1\n"
+        is_sample: false
+
+  - title: "反转链表"
+    description: |
+      给定单链表的头节点 head，请反转链表，并返回反转后的链表。
+
+      **输入格式：**
+      第一行包含一个整数 n，表示链表的节点数。
+      第二行包含 n 个整数，表示链表的节点值（按顺序）。
+
+      **输出格式：**
+      输出 n 个整数，表示反转后的链表节点值，用空格分隔。
+
+      **示例：**
+      输入：
+      ```
+      5
+      1 2 3 4 5
+      ```
+      输出：
+      ```
+      5 4 3 2 1
+      ```
+    difficulty: easy
+    time_limit_ms: 1000
+    memory_limit_kb: 262144
+    test_cases:
+      - input: "5\n1 2 3 4 5\n"
+        expected_output: "5 4 3 2 1\n"
+        is_sample: true
+      - input: "1\n42\n"
+        expected_output: "42\n"
+        is_sample: false
+      - input: "0\n\n"
+        expected_output: "\n"
+        is_sample: false
