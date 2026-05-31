@@ -115,6 +115,7 @@ users 1───N refresh_tokens
 | username | VARCHAR(64) UNIQUE NOT NULL | |
 | password_hash | VARCHAR(256) NOT NULL | bcrypt |
 | role | ENUM('user','admin') DEFAULT 'user' | |
+| status | ENUM('active','disabled') DEFAULT 'active' | 账号状态，管理员可禁用 |
 | created_at | DATETIME DEFAULT CURRENT_TIMESTAMP | |
 
 **problems**
@@ -149,7 +150,7 @@ users 1───N refresh_tokens
 | user_id | BIGINT FK→users.id | |
 | problem_id | BIGINT FK→problems.id | |
 | code | MEDIUMTEXT NOT NULL | |
-| status | ENUM('pending','compiling','running','accepted','wrong_answer','time_limit','memory_limit','runtime_error','compile_error') | |
+| status | ENUM('pending','compiling','running','accepted','wrong_answer','time_limit','memory_limit','runtime_error','compile_error','system_error') | system_error 表示非用户代码导致的系统异常 |
 | compile_output | TEXT | 编译错误信息 |
 | passed_cases | INT DEFAULT 0 | |
 | total_cases | INT DEFAULT 0 | |
@@ -157,6 +158,7 @@ users 1───N refresh_tokens
 | memory_used_kb | INT | 最大内存 |
 | diff_output | TEXT | WA 时的 diff 信息 |
 | created_at | DATETIME DEFAULT CURRENT_TIMESTAMP | |
+| updated_at | DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | 判题完成/状态变更时间 |
 
 **refresh_tokens**
 

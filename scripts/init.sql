@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(64) NOT NULL UNIQUE,
     password_hash VARCHAR(256) NOT NULL,
     role ENUM('user', 'admin') DEFAULT 'user',
+    status ENUM('active', 'disabled') DEFAULT 'active',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -34,7 +35,8 @@ CREATE TABLE IF NOT EXISTS submissions (
     problem_id BIGINT NOT NULL,
     code MEDIUMTEXT NOT NULL,
     status ENUM('pending', 'compiling', 'running', 'accepted', 'wrong_answer',
-                'time_limit', 'memory_limit', 'runtime_error', 'compile_error')
+                'time_limit', 'memory_limit', 'runtime_error', 'compile_error',
+                'system_error')
                 DEFAULT 'pending',
     compile_output TEXT,
     passed_cases INT DEFAULT 0,
@@ -43,6 +45,7 @@ CREATE TABLE IF NOT EXISTS submissions (
     memory_used_kb INT DEFAULT 0,
     diff_output TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
