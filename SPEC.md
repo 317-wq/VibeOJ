@@ -421,7 +421,8 @@ volumes:
 | 范围 | 工具 | 覆盖目标 |
 |------|------|----------|
 | 日志模块 | C++ 单测 (Google Test) | 日志等级/时间戳/文件行号/线程安全/长消息 (12 tests) |
-| 种子数据 | C++ 单测 (Google Test) | YAML 解析/默认值/多题目 (10 tests) |
+| 种子数据解析 | C++ 单测 (Google Test) | YAML 解析/默认值/多题目 (10 tests) |
+| 种子数据导入 | C++ 单测 (Google Test) | 数据库导入/幂等性/字段完整性/空数据集 (10 tests) |
 | 判题沙箱 | C++ 单测 (Google Test / Catch2) | fork/ulimit/管道通信正确性 |
 | 认证模块 | C++ 单测 (Google Test) | bcrypt 哈希/验证、JWT 签发/验证/过期、中间件 Bearer 提取、API 端点集成 (39 tests) |
 | 题目 API | C++ 单测 (Google Test) | 列表分页/筛选/JSON 格式、详情+样例、不存在题目 404 (13 tests) |
@@ -433,7 +434,7 @@ volumes:
 
 ## 11. TODO 清单
 
-### Phase 1: 项目骨架 ✅
+### Phase 1: 项目骨架
 - [x] CMakeLists.txt 项目结构搭建 (含 GTest 单元测试框架)
 - [x] Dockerfile + docker-compose.yml (含 MySQL .so 版本匹配修复)
 - [x] nginx.conf 反向代理配置 (含 gzip + 静态资源缓存)
@@ -455,7 +456,7 @@ volumes:
 - [x] 判题线程池 (std::queue + mutex + condition_variable)
 - [x] 提交记录查询 API
 - [x] 管理后台 API (题目CRUD + 用户管理 + 统计) — 42 个单元测试通过
-- [ ] 种子数据自动导入逻辑
+- [x] 种子数据自动导入逻辑 (含幂等性检查，10 个单元测试)
 
 ### Phase 3: 前端页面
 - [ ] 全局样式 `css/style.css`

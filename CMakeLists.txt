@@ -63,6 +63,7 @@ set(SOURCES
   src/common/log.cc
   src/config/config.cc
   src/config/seeder.cc
+  src/config/seed_importer.cc
   src/db/connection_pool.cc
   src/db/dao.cc
   src/auth/jwt.cc
@@ -102,6 +103,7 @@ option(BUILD_TESTS "Build unit tests" ON)
 if(BUILD_TESTS)
   set(TEST_SOURCES
     tests/test_seeder.cc
+    tests/test_seed_importer.cc
     tests/test_log.cc
     tests/test_server.cc
     tests/test_db.cc
@@ -114,6 +116,7 @@ if(BUILD_TESTS)
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
     src/config/seeder.cc
+  src/config/seed_importer.cc
     src/config/config.cc
     src/common/log.cc
     src/db/connection_pool.cc

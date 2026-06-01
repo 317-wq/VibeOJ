@@ -12,6 +12,7 @@
 #include "common/log.h"
 #include "config/config.h"
 #include "config/seeder.h"
+#include "config/seed_importer.h"
 #include "db/connection_pool.h"
 #include "handler/admin_handler.h"
 #include "handler/auth_handler.h"
@@ -143,16 +144,14 @@ int main(int argc, char** argv) {
   LOG_INFO("Database: %s@%s:%d/%s", cfg.db_user.c_str(), cfg.db_host.c_str(),
            cfg.db_port, cfg.db_name.c_str());
 
-  // 5. 加载种子数据（解析失败不阻断启动，仅记录警告）
+  // 5. 预解析种子文件（提前发现 YAML 格式错误；解析失败不阻断启动）
+  vibeoj::SeedData seed_data;
+  bool has_seed_data = false;
   try {
-    auto data = vibeoj::parse_seed_file(cfg.seed_file);
-    LOG_INFO("Seed file loaded: %d problems from %s",
-             static_cast<int>(data.problems.size()), cfg.seed_file.c_str());
-    for (const auto& p : data.problems) {
-      LOG_DEBUG("  - [%s] %s (%d test cases)",
-                vibeoj::difficulty_to_string(p.difficulty).c_str(), p.title.c_str(),
-                static_cast<int>(p.test_cases.size()));
-    }
+    seed_data = vibeoj::parse_seed_file(cfg.seed_file);
+    has_seed_data = true;
+    LOG_INFO("Seed file parsed: %d problem(s) from %s",
+             static_cast<int>(seed_data.problems.size()), cfg.seed_file.c_str());
   } catch (const std::exception& e) {
     LOG_WARNING("Failed to parse seed file '%s': %s — continuing without seed data",
                 cfg.seed_file.c_str(), e.what());
@@ -182,13 +181,27 @@ int main(int argc, char** argv) {
   vibeoj::ConnectionPool::instance().init(cfg);
   LOG_INFO("Database connection pool initialized");
 
-  // 10. 启动判题线程池
+  // 10. 导入种子数据至数据库（仅当 problems 表为空时写入，幂等操作）
+  if (has_seed_data) {
+    try {
+      auto result = vibeoj::import_seed_data(seed_data);
+      if (result.problems_imported > 0) {
+        LOG_INFO("Seed data written to database: %d problem(s), %d test case(s)",
+                 result.problems_imported, result.test_cases_imported);
+      }
+    } catch (const std::exception& e) {
+      LOG_WARNING("Seed data import error: %s — continuing with empty database",
+                  e.what());
+    }
+  }
+
+  // 11. 启动判题线程池
   vibeoj::JudgeRunner::instance().start(0);  // 0 = 自动检测 CPU 核心数
 
-  // 11. 注册 API 路由
+  // 12. 注册 API 路由
   register_routes(*g_server, cfg);
 
-  // 12. 启动监听
+  // 13. 启动监听
   LOG_INFO("HTTP server listening on http://%s:%d", cfg.host.c_str(), cfg.port);
   std::cout << "VibeOJ server running at http://" << cfg.host << ":" << cfg.port << std::endl;
 
@@ -198,7 +211,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  // 13. 停止判题线程池
+  // 14. 停止判题线程池
   vibeoj::JudgeRunner::instance().stop();
 
   LOG_INFO("Server stopped gracefully.");
