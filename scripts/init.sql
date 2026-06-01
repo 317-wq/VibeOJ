@@ -1,3 +1,6 @@
+-- VibeOJ Database Initialization
+-- Executed automatically by MySQL on first container start
+
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) NOT NULL UNIQUE,
@@ -26,7 +29,8 @@ CREATE TABLE IF NOT EXISTS test_cases (
     expected_output TEXT NOT NULL,
     is_sample BOOLEAN DEFAULT FALSE,
     order_index INT DEFAULT 0,
-    FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+    FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE,
+    INDEX idx_test_cases_problem_order (problem_id, order_index)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS submissions (
@@ -47,7 +51,10 @@ CREATE TABLE IF NOT EXISTS submissions (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+    FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE,
+    INDEX idx_submissions_user (user_id),
+    INDEX idx_submissions_problem (problem_id),
+    INDEX idx_submissions_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS refresh_tokens (
@@ -56,5 +63,11 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     token_hash VARCHAR(256) NOT NULL UNIQUE,
     expires_at DATETIME NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_refresh_tokens_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Create remote access user (matches SPEC Section 4.3)
+CREATE USER IF NOT EXISTS 'ljt'@'%' IDENTIFIED BY 'ljt123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON oj_system.* TO 'ljt'@'%';
+FLUSH PRIVILEGES;
