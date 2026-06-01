@@ -16,6 +16,7 @@
 #include "handler/auth_handler.h"
 #include "handler/problem_handler.h"
 #include "handler/submit_handler.h"
+#include "judge/runner.h"
 
 namespace {
 
@@ -183,10 +184,13 @@ int main(int argc, char** argv) {
   vibeoj::ConnectionPool::instance().init(cfg);
   LOG_INFO("Database connection pool initialized");
 
-  // 10. 注册 API 路由
+  // 10. 启动判题线程池
+  vibeoj::JudgeRunner::instance().start(0);  // 0 = 自动检测 CPU 核心数
+
+  // 11. 注册 API 路由
   register_routes(*g_server, cfg);
 
-  // 11. 启动监听
+  // 12. 启动监听
   LOG_INFO("HTTP server listening on http://%s:%d", cfg.host.c_str(), cfg.port);
   std::cout << "VibeOJ server running at http://" << cfg.host << ":" << cfg.port << std::endl;
 
@@ -195,6 +199,9 @@ int main(int argc, char** argv) {
     std::cerr << "FATAL: Could not start HTTP server on " << cfg.host << ":" << cfg.port << std::endl;
     return 1;
   }
+
+  // 13. 停止判题线程池
+  vibeoj::JudgeRunner::instance().stop();
 
   LOG_INFO("Server stopped gracefully.");
   return 0;

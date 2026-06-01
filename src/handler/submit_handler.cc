@@ -6,6 +6,7 @@
 #include "db/connection_pool.h"
 #include "db/dao.h"
 #include "httplib.h"
+#include "judge/runner.h"
 #include "model/submission.h"
 #include "model/user.h"
 #include "nlohmann/json.hpp"
@@ -142,7 +143,10 @@ void SubmitHandler::register_routes(httplib::Server& server,
     LOG_INFO("Submission %ld created: user=%ld problem=%ld",
              sub_id, user.id, problem_id);
 
-    // 5. 返回 submission_id（后续判题线程池会从 pending 队列取任务）
+    // 5. 将提交加入判题队列
+    JudgeRunner::instance().enqueue(sub_id);
+
+    // 6. 返回 submission_id
     send_ok(res, {{"submission_id", sub_id}}, 201);
   });
 

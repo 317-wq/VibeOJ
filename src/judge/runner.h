@@ -2,7 +2,7 @@
 #pragma once
 
 #include <cstdint>
-#include <functional>
+#include <memory>
 
 namespace vibeoj {
 class JudgeRunner {
@@ -11,6 +11,11 @@ class JudgeRunner {
   void start(int num_workers);
   void stop();
   void enqueue(int64_t submission_id);
+
+ private:
+  JudgeRunner() = default;
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
 };
 
 }  // namespace vibeoj
