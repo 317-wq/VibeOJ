@@ -407,7 +407,7 @@ volumes:
 
 ### Phase 2: 后端核心
 - [x] 日志记录模块 (common/log) — 分级日志输出到 logs/ 目录 + stderr，线程安全
-- [ ] cpp-httplib HTTP server 启动
+- [x] cpp-httplib HTTP server 启动
 - [ ] MySQL 连接池实现
 - [ ] 用户注册/登录 API (bcrypt + JWT)
 - [ ] JWT 中间件 (access_token 验证 + refresh 流程)

@@ -61,6 +61,7 @@ endif()
 set(SOURCES
   src/main.cc
   src/common/log.cc
+  src/config/config.cc
   src/config/seeder.cc
   src/db/connection_pool.cc
   src/db/dao.cc
@@ -101,10 +102,12 @@ if(BUILD_TESTS)
   set(TEST_SOURCES
     tests/test_seeder.cc
     tests/test_log.cc
+    tests/test_server.cc
   )
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
     src/config/seeder.cc
+    src/config/config.cc
     src/common/log.cc
   )
 
@@ -114,6 +117,7 @@ if(BUILD_TESTS)
   )
 
   target_link_libraries(vibeoj-tests PRIVATE
+    httplib::httplib
     yaml-cpp::yaml-cpp
     Threads::Threads
   )

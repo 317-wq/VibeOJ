@@ -1,0 +1,17 @@
+{
+    "permissions": {
+      "allow": [
+        "Bash(npm run test:*)",
+        "Bash(npm run lint:*)",
+        "Bash(npm run build:*)",
+        "Read",
+        "Write",
+        "Edit"
+      ],
+      "deny": [
+        "Bash(rm -rf:*)",
+        "Bash(git push:*)",
+        "Bash(curl * | bash)"
+      ]
+    }
+  } 
