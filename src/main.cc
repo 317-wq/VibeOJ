@@ -13,6 +13,7 @@
 #include "config/config.h"
 #include "config/seeder.h"
 #include "db/connection_pool.h"
+#include "handler/admin_handler.h"
 #include "handler/auth_handler.h"
 #include "handler/problem_handler.h"
 #include "handler/submit_handler.h"
@@ -114,11 +115,8 @@ void register_routes(httplib::Server& server, const vibeoj::ServerConfig& cfg) {
   // ── 提交与判题路由 ──────────────────────────────────
   vibeoj::SubmitHandler::register_routes(server, cfg);
 
-  // ── 管理后台路由（stub） ────────────────────────────────
-  server.Post("/api/v1/admin/problems", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
+  // ── 管理后台路由 ──────────────────────────────────────
+  vibeoj::AdminHandler::register_routes(server, cfg);
 }
 
 }  // namespace
