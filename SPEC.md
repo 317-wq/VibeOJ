@@ -45,6 +45,8 @@
 ```
 src/
 ├── main.cc              # 入口，启动 HTTP server
+├── common/              # 通用工具模块
+│   └── log              # 日志记录 (分级输出 → logs/ 目录 + stderr)
 ├── config/              # 配置加载 (端口、DB连接、JWT密钥等)
 ├── db/                  # MySQL 连接池 & DAO 层
 ├── auth/                # JWT 生成/验证中间件，密码 bcrypt 哈希
@@ -383,6 +385,8 @@ volumes:
 
 | 范围 | 工具 | 覆盖目标 |
 |------|------|----------|
+| 日志模块 | C++ 单测 (Google Test) | 日志等级/时间戳/文件行号/线程安全/长消息 (12 tests) |
+| 种子数据 | C++ 单测 (Google Test) | YAML 解析/默认值/多题目 (10 tests) |
 | 判题沙箱 | C++ 单测 (Google Test / Catch2) | fork/ulimit/管道通信正确性 |
 | 认证模块 | C++ 单测 | JWT 签发/验证/过期逻辑 |
 | API 集成 | curl 脚本 / Postman | 端到端流程 |
@@ -402,6 +406,7 @@ volumes:
 - [x] 种子数据解析器实现 + 单元测试 (10 tests passed)
 
 ### Phase 2: 后端核心
+- [x] 日志记录模块 (common/log) — 分级日志输出到 logs/ 目录 + stderr，线程安全
 - [ ] cpp-httplib HTTP server 启动
 - [ ] MySQL 连接池实现
 - [ ] 用户注册/登录 API (bcrypt + JWT)

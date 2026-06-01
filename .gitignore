@@ -20,3 +20,6 @@ mysql_data/
 # Environment
 .env
 .env.local
+
+# Runtime
+logs/

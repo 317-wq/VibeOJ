@@ -60,6 +60,7 @@ endif()
 # ── Main server executable ──────────────────────────────────
 set(SOURCES
   src/main.cc
+  src/common/log.cc
   src/config/seeder.cc
   src/db/connection_pool.cc
   src/db/dao.cc
@@ -99,10 +100,12 @@ option(BUILD_TESTS "Build unit tests" ON)
 if(BUILD_TESTS)
   set(TEST_SOURCES
     tests/test_seeder.cc
+    tests/test_log.cc
   )
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
     src/config/seeder.cc
+    src/common/log.cc
   )
 
   target_include_directories(vibeoj-tests PRIVATE
@@ -112,6 +115,7 @@ if(BUILD_TESTS)
 
   target_link_libraries(vibeoj-tests PRIVATE
     yaml-cpp::yaml-cpp
+    Threads::Threads
   )
 
   # Link GTest (either system or fetched)
