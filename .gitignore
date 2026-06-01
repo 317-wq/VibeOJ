@@ -23,3 +23,19 @@ mysql_data/
 
 # Runtime
 logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+dist/
+htmlcov/
+.coverage
+report.html
+test-results/
+
+.claude/skills

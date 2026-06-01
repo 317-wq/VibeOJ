@@ -1,0 +1,5 @@
+requests>=2.31
+pytest>=8.0
+pytest-html>=4.1
+pytest-xdist>=3.5
+pytest-timeout>=2.2
