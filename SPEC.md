@@ -428,6 +428,7 @@ volumes:
 | 题目 API | C++ 单测 (Google Test) | 列表分页/筛选/JSON 格式、详情+样例、不存在题目 404 (13 tests) |
 | 提交 API | C++ 单测 (Google Test) | 创建/查询/列表/分页/状态更新/删除/枚举转换 (26 tests) |
 | 管理后台 API | C++ 单测 (Google Test) | 题目CRUD + 测试用例CRUD + 用户管理 + 统计 + 认证授权 + 响应格式验证 (42 tests) |
+| 前端 JS 模块 | Python + Node.js 子进程 | api.js (11 tests): token 管理/自动 refresh/API 封装; utils.js (21 tests): 日期/转义/状态映射/DOM/分页/存储 |
 | API 集成 | curl 脚本 / Postman | 端到端流程 |
 
 ---
@@ -459,9 +460,9 @@ volumes:
 - [x] 种子数据自动导入逻辑 (含幂等性检查，10 个单元测试)
 
 ### Phase 3: 前端页面
-- [ ] 全局样式 `css/style.css`
-- [ ] `js/api.js` (fetch 封装 + token 管理 + 自动 refresh)
-- [ ] `js/utils.js` (通用工具)
+- [x] 全局样式 `css/style.css`
+- [x] `js/api.js` (fetch 封装 + token 管理 + 自动 refresh)
+- [x] `js/utils.js` (通用工具)
 - [ ] `index.html` — 首页题目列表
 - [ ] `login.html` — 登录页
 - [ ] `register.html` — 注册页
