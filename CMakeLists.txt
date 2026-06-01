@@ -103,12 +103,15 @@ if(BUILD_TESTS)
     tests/test_seeder.cc
     tests/test_log.cc
     tests/test_server.cc
+    tests/test_db.cc
   )
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
     src/config/seeder.cc
     src/config/config.cc
     src/common/log.cc
+    src/db/connection_pool.cc
+    src/db/dao.cc
   )
 
   target_include_directories(vibeoj-tests PRIVATE
@@ -120,6 +123,7 @@ if(BUILD_TESTS)
     httplib::httplib
     yaml-cpp::yaml-cpp
     Threads::Threads
+    ${MYSQL_CPPCONN_LIB}
   )
 
   # Link GTest (either system or fetched)
