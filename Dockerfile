@@ -24,13 +24,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     g++ \
     libssl3 \
-    libmysqlcppconn8-2 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+# Copy built binary
 COPY --from=builder /app/build/vibeoj-server /app/vibeoj-server
-COPY --from=builder /app/static /app/static
+
+# Copy MySQL connector shared library from builder (guaranteed version match)
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libmysqlcppconn.so* /usr/lib/x86_64-linux-gnu/
+
+# Copy seed data (static files are served by nginx, not needed here)
 COPY --from=builder /app/data /app/data
 
 RUN mkdir -p /tmp/judge
