@@ -12,6 +12,9 @@
 #include "common/log.h"
 #include "config/config.h"
 #include "config/seeder.h"
+#include "db/connection_pool.h"
+#include "handler/auth_handler.h"
+#include "handler/problem_handler.h"
 
 namespace {
 
@@ -89,7 +92,7 @@ std::string resolve_path(const std::string& path,
 }
 
 // 注册所有 API 路由（各 handler 模块的完整实现在 Phase 2 中逐步添加）。
-void register_routes(httplib::Server& server) {
+void register_routes(httplib::Server& server, const vibeoj::ServerConfig& cfg) {
   // ── 根路径 → 重定向到首页 ──────────────────────────────────
   server.Get("/", [](const httplib::Request&, httplib::Response& res) {
     res.set_redirect("/index.html");
@@ -100,29 +103,11 @@ void register_routes(httplib::Server& server) {
     res.set_content(R"({"status":"ok"})", "application/json");
   });
 
-  // ── 认证路由（stub，Phase 2 实现） ────────────────────────
-  server.Post("/api/v1/auth/register", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
-  server.Post("/api/v1/auth/login", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
-  server.Post("/api/v1/auth/refresh", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
-  server.Post("/api/v1/auth/logout", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
+  // ── 认证路由 ────────────────────────────────────────────
+  vibeoj::AuthHandler::register_routes(server, cfg);
 
-  // ── 题目路由（stub） ─────────────────────────────────────
-  server.Get("/api/v1/problems", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
+  // ── 题目路由 ────────────────────────────────────────────
+  vibeoj::ProblemHandler::register_routes(server);
 
   // ── 提交路由（stub） ─────────────────────────────────────
   server.Post("/api/v1/submissions", [](const httplib::Request& req, httplib::Response& res) {
@@ -196,10 +181,14 @@ int main(int argc, char** argv) {
                 cfg.static_dir.c_str());
   }
 
-  // 9. 注册 API 路由
-  register_routes(*g_server);
+  // 9. 初始化数据库连接池（在注册路由之前，因为 handler 需要连接池）
+  vibeoj::ConnectionPool::instance().init(cfg);
+  LOG_INFO("Database connection pool initialized");
 
-  // 10. 启动监听
+  // 10. 注册 API 路由
+  register_routes(*g_server, cfg);
+
+  // 11. 启动监听
   LOG_INFO("HTTP server listening on http://%s:%d", cfg.host.c_str(), cfg.port);
   std::cout << "VibeOJ server running at http://" << cfg.host << ":" << cfg.port << std::endl;
 

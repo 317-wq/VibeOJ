@@ -388,7 +388,7 @@ volumes:
 | 日志模块 | C++ 单测 (Google Test) | 日志等级/时间戳/文件行号/线程安全/长消息 (12 tests) |
 | 种子数据 | C++ 单测 (Google Test) | YAML 解析/默认值/多题目 (10 tests) |
 | 判题沙箱 | C++ 单测 (Google Test / Catch2) | fork/ulimit/管道通信正确性 |
-| 认证模块 | C++ 单测 | JWT 签发/验证/过期逻辑 |
+| 认证模块 | C++ 单测 (Google Test) | bcrypt 哈希/验证、JWT 签发/验证/过期、中间件 Bearer 提取、API 端点集成 (39 tests) |
 | API 集成 | curl 脚本 / Postman | 端到端流程 |
 
 ---
@@ -409,8 +409,8 @@ volumes:
 - [x] 日志记录模块 (common/log) — 分级日志输出到 logs/ 目录 + stderr，线程安全
 - [x] cpp-httplib HTTP server 启动
 - [x] MySQL 连接池实现 — 含 DAO 层 (UserDAO/ProblemDAO/TestCaseDAO/SubmissionDAO/RefreshTokenDAO)，31 个单元测试
-- [ ] 用户注册/登录 API (bcrypt + JWT)
-- [ ] JWT 中间件 (access_token 验证 + refresh 流程)
+- [x] 用户注册/登录 API (bcrypt + JWT) — 39 个单元测试通过
+- [x] JWT 中间件 (access_token 验证 + refresh 流程)
 - [ ] 题目列表/详情 API
 - [ ] 代码提交 API (接收代码 → 写入 submission → 入队)
 - [ ] 判题引擎 (g++ 编译 + fork/ulimit 执行 + diff)

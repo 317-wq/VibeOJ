@@ -93,6 +93,7 @@ target_link_libraries(vibeoj-server PRIVATE
   OpenSSL::Crypto
   Threads::Threads
   ${MYSQL_CPPCONN_LIB}
+  crypt
 )
 
 # ── Unit tests ──────────────────────────────────────────────
@@ -104,6 +105,7 @@ if(BUILD_TESTS)
     tests/test_log.cc
     tests/test_server.cc
     tests/test_db.cc
+    tests/test_auth.cc
   )
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
@@ -112,18 +114,28 @@ if(BUILD_TESTS)
     src/common/log.cc
     src/db/connection_pool.cc
     src/db/dao.cc
+    src/auth/jwt.cc
+    src/auth/password.cc
+    src/auth/middleware.cc
+    src/handler/auth_handler.cc
+    src/handler/problem_handler.cc
   )
 
   target_include_directories(vibeoj-tests PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${yaml-cpp_SOURCE_DIR}/include
+    ${json_SOURCE_DIR}/include
   )
 
   target_link_libraries(vibeoj-tests PRIVATE
     httplib::httplib
+    nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
+    OpenSSL::SSL
+    OpenSSL::Crypto
     Threads::Threads
     ${MYSQL_CPPCONN_LIB}
+    crypt
   )
 
   # Link GTest (either system or fetched)

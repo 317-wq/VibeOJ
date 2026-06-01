@@ -6,7 +6,7 @@
         "Bash(npm run build:*)",
         "Read",
         "Write",
-        "Edit"
+        "Edit" 
       ],
       "deny": [
         "Bash(rm -rf:*)",
