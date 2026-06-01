@@ -106,6 +106,8 @@ if(BUILD_TESTS)
     tests/test_server.cc
     tests/test_db.cc
     tests/test_auth.cc
+    tests/test_problem.cc
+    tests/test_submit.cc
   )
 
   add_executable(vibeoj-tests ${TEST_SOURCES}
@@ -119,6 +121,7 @@ if(BUILD_TESTS)
     src/auth/middleware.cc
     src/handler/auth_handler.cc
     src/handler/problem_handler.cc
+    src/handler/submit_handler.cc
   )
 
   target_include_directories(vibeoj-tests PRIVATE

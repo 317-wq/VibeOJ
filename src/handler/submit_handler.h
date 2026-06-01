@@ -1,11 +1,14 @@
-// 提交相关 HTTP 处理器 — POST /api/v1/submissions（提交代码）+ GET 查询。
+// 提交处理器 — POST /api/v1/submissions（提交代码）+ GET 查询结果/列表。
 #pragma once
+
+#include "httplib.h"
+#include "config/config.h"
 
 namespace vibeoj {
 
 class SubmitHandler {
  public:
-  // TODO: HTTP request handlers in Phase 2
+  static void register_routes(httplib::Server& server, const ServerConfig& cfg);
 };
 
 }  // namespace vibeoj

@@ -98,6 +98,12 @@ class TestCaseDAO {
 
 class SubmissionDAO {
  public:
+  // 分页查询结果。
+  struct ListResult {
+    std::vector<Submission> submissions;
+    int64_t total = 0;
+  };
+
   // 创建提交记录，填充 sub.id；失败返回 -1。
   static int64_t Create(sql::Connection& conn, Submission& sub);
 
@@ -116,6 +122,13 @@ class SubmissionDAO {
   static std::vector<Submission> FindByUserAndProblem(sql::Connection& conn,
                                                       int64_t user_id,
                                                       int64_t problem_id);
+
+  // 分页查询提交列表，支持按 user_id / problem_id 可选筛选。
+  // user_id <= 0 表示不过滤用户；problem_id <= 0 表示不过滤题目。
+  static ListResult List(sql::Connection& conn,
+                         int64_t user_id = 0,
+                         int64_t problem_id = 0,
+                         int page = 1, int page_size = 20);
 
   // 更新判题状态和结果。
   static bool UpdateStatus(sql::Connection& conn, int64_t id,

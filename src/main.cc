@@ -15,6 +15,7 @@
 #include "db/connection_pool.h"
 #include "handler/auth_handler.h"
 #include "handler/problem_handler.h"
+#include "handler/submit_handler.h"
 
 namespace {
 
@@ -109,11 +110,8 @@ void register_routes(httplib::Server& server, const vibeoj::ServerConfig& cfg) {
   // ── 题目路由 ────────────────────────────────────────────
   vibeoj::ProblemHandler::register_routes(server);
 
-  // ── 提交路由（stub） ─────────────────────────────────────
-  server.Post("/api/v1/submissions", [](const httplib::Request& req, httplib::Response& res) {
-    res.status = 501;
-    res.set_content(R"({"error":"not implemented yet"})", "application/json");
-  });
+  // ── 提交与判题路由 ──────────────────────────────────
+  vibeoj::SubmitHandler::register_routes(server, cfg);
 
   // ── 管理后台路由（stub） ────────────────────────────────
   server.Post("/api/v1/admin/problems", [](const httplib::Request& req, httplib::Response& res) {

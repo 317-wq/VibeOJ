@@ -583,6 +583,62 @@ std::vector<Submission> SubmissionDAO::FindByUserAndProblem(
   return subs;
 }
 
+SubmissionDAO::ListResult SubmissionDAO::List(sql::Connection& conn,
+                                                   int64_t user_id,
+                                                   int64_t problem_id,
+                                                   int page, int page_size) {
+  ListResult result;
+  try {
+    // 动态构建 WHERE 子句
+    std::string where;
+    if (user_id > 0 && problem_id > 0) {
+      where = "WHERE user_id = ? AND problem_id = ?";
+    } else if (user_id > 0) {
+      where = "WHERE user_id = ?";
+    } else if (problem_id > 0) {
+      where = "WHERE problem_id = ?";
+    }
+
+    // COUNT 查询
+    std::string count_sql = "SELECT COUNT(*) FROM submissions " + where;
+    auto count_stmt = conn.prepareStatement(count_sql);
+    int param_idx = 1;
+    if (user_id > 0) count_stmt->setInt64(param_idx++, user_id);
+    if (problem_id > 0) count_stmt->setInt64(param_idx++, problem_id);
+    auto count_rs = count_stmt->executeQuery();
+    if (count_rs->next()) result.total = count_rs->getInt64(1);
+    delete count_rs;
+    delete count_stmt;
+
+    if (result.total == 0) return result;
+
+    // 分页查询
+    int offset = (page - 1) * page_size;
+    std::string sql =
+        "SELECT id, user_id, problem_id, code, status, compile_output, "
+        "passed_cases, total_cases, time_used_ms, memory_used_kb, "
+        "diff_output, "
+        "DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at, "
+        "DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS updated_at "
+        "FROM submissions " + where + " ORDER BY id DESC LIMIT ? OFFSET ?";
+    auto stmt = conn.prepareStatement(sql);
+    param_idx = 1;
+    if (user_id > 0) stmt->setInt64(param_idx++, user_id);
+    if (problem_id > 0) stmt->setInt64(param_idx++, problem_id);
+    stmt->setInt(param_idx++, page_size);
+    stmt->setInt(param_idx++, offset);
+    auto rs = stmt->executeQuery();
+    while (rs->next()) {
+      result.submissions.push_back(load_submission(rs));
+    }
+    delete rs;
+    delete stmt;
+  } catch (const sql::SQLException& e) {
+    LOG_ERROR("SubmissionDAO::List: %s", e.what());
+  }
+  return result;
+}
+
 bool SubmissionDAO::UpdateStatus(sql::Connection& conn, int64_t id,
                                  SubmissionStatus status, int passed_cases,
                                  int total_cases, int time_ms, int memory_kb,

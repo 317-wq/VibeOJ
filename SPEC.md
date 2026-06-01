@@ -213,8 +213,43 @@ Base URL: `/api/v1`
 
 | 方法 | 路径 | 说明 | Auth |
 |------|------|------|------|
-| GET | /problems | 题目列表 (支持 ?difficulty=&page=&size=) | 可选 |
+| GET | /problems | 题目列表 (支持 ?difficulty=&page=&page_size=) | 可选 |
 | GET | /problems/:id | 题目详情 + 可见样例 | 可选 |
+
+**题目列表响应** (200):
+
+```json
+{
+  "data": {
+    "items": [
+      {"id": 1, "title": "两数之和", "difficulty": "easy", "created_at": "2026-06-01 10:00:00"}
+    ],
+    "total": 1, "page": 1, "page_size": 20
+  },
+  "message": "ok"
+}
+```
+
+**题目详情响应** (200):
+
+```json
+{
+  "data": {
+    "id": 1, "title": "两数之和", "description": "Markdown 题目描述...",
+    "difficulty": "easy", "time_limit_ms": 1000, "memory_limit_kb": 262144,
+    "created_at": "2026-06-01 10:00:00",
+    "sample_cases": [
+      {"id": 1, "input": "3\n2 7 11 15\n9\n", "expected_output": "0 1\n", "order_index": 1}
+    ]
+  },
+  "message": "ok"
+}
+```
+
+- 列表接口仅返回 `id/title/difficulty/created_at`，不返回 `description` 与 `test_cases`。
+- 详情接口额外返回 `description`、`time_limit_ms`、`memory_limit_kb`，以及 `is_sample=true` 的可见测试用例。
+- 所有 API 响应包含统一信封 `{data, message}`，错误响应包含 `{error}`。详细规范见 `docs/api.md`。
+- 查询参数 `page` 默认 1，`page_size` 默认 20，上限 100。`difficulty` 非法值返回 400。
 
 ### 5.3 提交与判题
 
@@ -389,6 +424,8 @@ volumes:
 | 种子数据 | C++ 单测 (Google Test) | YAML 解析/默认值/多题目 (10 tests) |
 | 判题沙箱 | C++ 单测 (Google Test / Catch2) | fork/ulimit/管道通信正确性 |
 | 认证模块 | C++ 单测 (Google Test) | bcrypt 哈希/验证、JWT 签发/验证/过期、中间件 Bearer 提取、API 端点集成 (39 tests) |
+| 题目 API | C++ 单测 (Google Test) | 列表分页/筛选/JSON 格式、详情+样例、不存在题目 404 (13 tests) |
+| 提交 API | C++ 单测 (Google Test) | 创建/查询/列表/分页/状态更新/删除/枚举转换 (26 tests) |
 | API 集成 | curl 脚本 / Postman | 端到端流程 |
 
 ---
@@ -409,10 +446,10 @@ volumes:
 - [x] 日志记录模块 (common/log) — 分级日志输出到 logs/ 目录 + stderr，线程安全
 - [x] cpp-httplib HTTP server 启动
 - [x] MySQL 连接池实现 — 含 DAO 层 (UserDAO/ProblemDAO/TestCaseDAO/SubmissionDAO/RefreshTokenDAO)，31 个单元测试
-- [x] 用户注册/登录 API (bcrypt + JWT) — 39 个单元测试通过
+- [x] 登录 API (bcrypt + JWT) — 39 个单元测试通过用户注册/
 - [x] JWT 中间件 (access_token 验证 + refresh 流程)
-- [ ] 题目列表/详情 API
-- [ ] 代码提交 API (接收代码 → 写入 submission → 入队)
+- [x] 题目列表/详情 API (13 tests passed)
+- [x] 代码提交 API (接收代码 → 写入 submission → 入队) — 26 个单元测试通过
 - [ ] 判题引擎 (g++ 编译 + fork/ulimit 执行 + diff)
 - [ ] 判题线程池
 - [ ] 提交记录查询 API
