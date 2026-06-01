@@ -16,10 +16,10 @@ struct ServerConfig {
   std::string db_host = "127.0.0.1";
   // MySQL 端口
   int db_port = 3306;
-  // MySQL 用户名（auth_socket 插件下可与系统用户同名免密）
+  // MySQL 用户名
   std::string db_user = "ljt";
-  // MySQL 密码（auth_socket 免密时为空）
-  std::string db_password;
+  // MySQL 密码
+  std::string db_password = "lijiatong344A@";
   // MySQL 数据库名
   std::string db_name = "oj_system";
   // JWT 签名密钥（生产环境务必通过环境变量设置）

@@ -34,7 +34,7 @@ ServerConfig load_config() {
   cfg.db_host        = env_str("DB_HOST", "127.0.0.1");
   cfg.db_port        = env_int("DB_PORT", 3306);
   cfg.db_user        = env_str("DB_USER", "ljt");
-  cfg.db_password    = env_str("DB_PASSWORD", "");
+  cfg.db_password    = env_str("DB_PASSWORD", "lijiatong344A@");
   cfg.db_name        = env_str("DB_NAME", "oj_system");
   cfg.jwt_secret     = env_str("JWT_SECRET", "change-me-in-production");
   cfg.jwt_access_ttl = env_int("JWT_ACCESS_TTL", 900);
