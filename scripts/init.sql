@@ -1,6 +1,9 @@
 -- VibeOJ Database Initialization
 -- Executed automatically by MySQL on first container start
 
+CREATE DATABASE IF NOT EXISTS oj_system;
+USE oj_system;
+
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) NOT NULL UNIQUE,
@@ -67,7 +70,11 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     INDEX idx_refresh_tokens_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Create remote access user (matches SPEC Section 4.3)
-CREATE USER IF NOT EXISTS 'ljt'@'%' IDENTIFIED BY 'ljt123';
+-- Create application user for both local and remote access
+-- Local: mysql_native_password (required by mysql-connector-cpp)
+CREATE USER IF NOT EXISTS 'ljt'@'localhost' IDENTIFIED WITH mysql_native_password BY 'lijiatong344A@';
+-- Remote: caching_sha2_password
+CREATE USER IF NOT EXISTS 'ljt'@'%' IDENTIFIED BY 'lijiatong344A@';
+GRANT SELECT, INSERT, UPDATE, DELETE ON oj_system.* TO 'ljt'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON oj_system.* TO 'ljt'@'%';
 FLUSH PRIVILEGES;

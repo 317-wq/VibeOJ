@@ -29,22 +29,22 @@ inline Difficulty difficulty_from_string(const std::string& s) {
 }
 
 struct TestCase {
-  int64_t id;
-  int64_t problem_id;
+  int64_t id = 0;
+  int64_t problem_id = 0;
   std::string input;
   std::string expected_output;
-  bool is_sample;
-  int order_index;
+  bool is_sample = false;
+  int order_index = 0;
 };
 
 struct Problem {
-  int64_t id;
+  int64_t id = 0;
   std::string title;
   std::string description;
-  Difficulty difficulty;
-  int time_limit_ms;
-  int memory_limit_kb;
-  int64_t created_by;
+  Difficulty difficulty = Difficulty::easy;
+  int time_limit_ms = 1000;
+  int memory_limit_kb = 262144;
+  int64_t created_by = 0;
   std::string created_at;
   std::vector<TestCase> test_cases;  // not stored in problems table, used for seed/API
 };
