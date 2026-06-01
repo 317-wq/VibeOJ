@@ -18,7 +18,7 @@ services:
       DB_PORT: "3306"
       DB_USER: root
       DB_PASS: vibeoj123
-      DB_NAME: vibeoj
+      DB_NAME: oj_system
       JWT_SECRET: change-me-in-production
       SEED_FILE: /app/data/seed.yaml
       SERVER_PORT: "8080"
@@ -33,7 +33,7 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: vibeoj123
-      MYSQL_DATABASE: vibeoj
+      MYSQL_DATABASE: oj_system
     volumes:
       - mysql_data:/var/lib/mysql
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

@@ -170,6 +170,28 @@ users 1───N refresh_tokens
 | expires_at | DATETIME NOT NULL | |
 | created_at | DATETIME DEFAULT CURRENT_TIMESTAMP | |
 
+### 4.3 连接方式
+
+本地 MySQL 使用 `auth_socket` 插件认证，与 Linux 系统用户同名即可免密登录：
+
+```bash
+# 本地免密登录（当前用户 ljt）
+mysql -uljt
+
+# 指定数据库
+mysql -uljt oj_system
+
+# 执行 SQL 脚本
+mysql -uljt oj_system < scripts/init.sql
+```
+
+| 配置项 | 值 |
+|--------|-----|
+| 数据库名 | `oj_system` |
+| 本地用户 | `ljt`（auth_socket 免密） |
+| 远程用户 | `ljt`（密码 `*****`） |
+| root 登录 | `sudo mysql`（auth_socket） |
+
 ---
 
 ## 5. API 设计
