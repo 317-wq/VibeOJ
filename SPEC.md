@@ -391,12 +391,15 @@ volumes:
 
 ## 11. TODO 清单
 
-### Phase 1: 项目骨架
-- [ ] CMakeLists.txt 项目结构搭建
-- [ ] Dockerfile + docker-compose.yml
-- [ ] nginx.conf 反向代理配置
-- [ ] MySQL 初始化 SQL 脚本
-- [ ] 数据种子文件 `data/seed.yaml`
+### Phase 1: 项目骨架 ✅
+- [x] CMakeLists.txt 项目结构搭建 (含 GTest 单元测试框架)
+- [x] Dockerfile + docker-compose.yml (含 MySQL .so 版本匹配修复)
+- [x] nginx.conf 反向代理配置 (含 gzip + 静态资源缓存)
+- [x] MySQL 初始化 SQL 脚本 (含性能索引 + 远程用户)
+- [x] 数据种子文件 `data/seed.yaml`
+- [x] .gitignore / .dockerignore
+- [x] 模块头文件定义 (model/, config/, db/, auth/, handler/, judge/)
+- [x] 种子数据解析器实现 + 单元测试 (10 tests passed)
 
 ### Phase 2: 后端核心
 - [ ] cpp-httplib HTTP server 启动
@@ -449,3 +452,27 @@ volumes:
 ---
 
 > 本规格基于 2026-06-01 深度访谈生成，共 6 轮 24 个问题。
+
+---
+
+## 13. 开发环境配置
+
+### 13.1 IDE 红色波浪线修复（compile_commands.json）
+
+CMake FetchContent 拉取的依赖（yaml-cpp、nlohmann/json、cpp-httplib）头文件路径在 `build/_deps/` 下，IDE 的 clangd/C++ 插件无法自动发现这些路径，导致 `#include "yaml-cpp/yaml.h"` 等语句显示红色错误下划线。
+
+**解决方案**：
+
+CMakeLists.txt 已配置 `CMAKE_EXPORT_COMPILE_COMMANDS ON`，构建后会在 `build/` 目录生成 `compile_commands.json`，项目根目录有符号链接指向它：
+
+```bash
+# 初次配置后执行
+cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j$(nproc)
+
+# 确认符号链接存在
+ls -l compile_commands.json  # → build/compile_commands.json
+```
+
+重新加载 IDE 窗口后，clangd 读取 `compile_commands.json` 即可解析所有 include 路径，红色波浪线消失。
+
+> **注意**：每次 CMake 配置参数变更（如新增源文件、修改 FetchContent 依赖）后需要重新构建以更新 `compile_commands.json`。该文件已加入 `.gitignore`。

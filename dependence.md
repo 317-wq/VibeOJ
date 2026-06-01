@@ -183,22 +183,15 @@ docker compose down
 | build-essential | ✅ | g++ 13.3.0 |
 | cmake | ✅ | 3.28.3 |
 | git | ✅ | 2.43.0 |
-| pkg-config | ❌ | 需要安装 |
-| libssl-dev | ❌ | 需要安装 (当前仅有 libssl3t64 运行时) |
-| libmysqlcppconn-dev | ❌ | 需要安装 |
-| docker.io | ❌ | 需要安装 |
-| docker-compose-v2 | ❌ | 需要安装 |
-| curl | ✅ | 8.5.0 (已安装) |
-| libgtest-dev | ❌ | 未安装 (可选) |
+| pkg-config | ✅ | 1.8.1 |
+| libssl-dev | ✅ | 3.0.13 |
+| libmysqlcppconn-dev | ✅ | 1.1.12 |
+| docker.io | ✅ | 29.1.3 |
+| docker-compose-v2 | ✅ | 2.40.3 |
+| curl | ✅ | 8.5.0 |
+| libgtest-dev | ✅ | 1.14.0 |
 
-**未安装项总计: 6 个** (pkg-config, libssl-dev, libmysqlcppconn-dev, docker.io, docker-compose-v2, libgtest-dev可选)
-
-### 一键安装缺失依赖
-
-```bash
-sudo apt install -y libssl-dev libmysqlcppconn-dev docker.io docker-compose-v2 curl
-sudo usermod -aG docker $USER
-```
+**所有依赖已就绪** ✅
 
 ---
 
@@ -206,7 +199,7 @@ sudo usermod -aG docker $USER
 
 ### Q: CMake 找不到 mysql-connector-cpp？
 
-Ubuntu 24.04 的 `libmysqlcppconn-dev` 将头文件安装在 `/usr/include/mysql-cppconn-8/`，CMakeLists.txt 通过 `find_library` 查找，通常无需额外配置。若查找失败，手动指定：
+Ubuntu 24.04 的 `libmysqlcppconn-dev` 将头文件安装在 `/usr/include/cppconn/`，MySQL 驱动头文件（`mysql_driver.h`、`mysql_connection.h`）位于 `/usr/include/`。CMakeLists.txt 通过 `find_library` 查找库文件，无需额外配置 include 路径。若查找失败，手动指定：
 
 ```bash
 cmake .. -DMYSQL_CPPCONN_LIB=/usr/lib/x86_64-linux-gnu/libmysqlcppconn.so

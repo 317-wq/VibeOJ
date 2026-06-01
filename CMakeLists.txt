@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Generate compile_commands.json for IDE language server (clangd)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include(FetchContent)
 
 # cpp-httplib
@@ -35,12 +38,26 @@ FetchContent_MakeAvailable(yaml-cpp)
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 
-# MySQL connector - try pkg-config first, then fallback
+# MySQL connector
 find_library(MYSQL_CPPCONN_LIB NAMES mysqlcppconn mysqlcppconn8)
 if(NOT MYSQL_CPPCONN_LIB)
   message(FATAL_ERROR "mysql-connector-cpp not found. Install libmysqlcppconn-dev")
 endif()
+message(STATUS "MySQL connector: ${MYSQL_CPPCONN_LIB}")
 
+# Google Test
+find_package(GTest QUIET)
+if(NOT GTest_FOUND)
+  message(STATUS "GTest not found via find_package, will fetch from GitHub")
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.14.0
+  )
+  FetchContent_MakeAvailable(googletest)
+endif()
+
+# ── Main server executable ──────────────────────────────────
 set(SOURCES
   src/main.cc
   src/config/seeder.cc
@@ -75,3 +92,38 @@ target_link_libraries(vibeoj-server PRIVATE
   Threads::Threads
   ${MYSQL_CPPCONN_LIB}
 )
+
+# ── Unit tests ──────────────────────────────────────────────
+option(BUILD_TESTS "Build unit tests" ON)
+
+if(BUILD_TESTS)
+  set(TEST_SOURCES
+    tests/test_seeder.cc
+  )
+
+  add_executable(vibeoj-tests ${TEST_SOURCES}
+    src/config/seeder.cc
+  )
+
+  target_include_directories(vibeoj-tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${yaml-cpp_SOURCE_DIR}/include
+  )
+
+  target_link_libraries(vibeoj-tests PRIVATE
+    yaml-cpp::yaml-cpp
+  )
+
+  # Link GTest (either system or fetched)
+  if(GTest_FOUND)
+    target_link_libraries(vibeoj-tests PRIVATE GTest::GTest GTest::Main)
+  else()
+    target_link_libraries(vibeoj-tests PRIVATE gtest gtest_main)
+  endif()
+
+  # Register CTest
+  enable_testing()
+  add_test(NAME vibeoj-unit-tests COMMAND vibeoj-tests)
+
+  message(STATUS "Unit tests: enabled")
+endif()
