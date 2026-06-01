@@ -1,0 +1,20 @@
+# Build directory
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.local
+
+# Docker
+mysql_data/
+
+# Documentation (not needed in image)
+*.md

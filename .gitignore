@@ -1,0 +1,22 @@
+# Build
+build/
+cmake-build-*/
+compile_commands.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+mysql_data/
+
+# Environment
+.env
+.env.local
